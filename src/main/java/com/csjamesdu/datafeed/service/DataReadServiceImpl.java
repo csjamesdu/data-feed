@@ -20,7 +20,8 @@ public class DataReadServiceImpl implements DataReadService{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataReadServiceImpl.class);
 
-    private static final String FILE_SUFFIX = "Excel.xlsx";
+    private static final String FILE_SUFFIX = "_Excel.xlsx";
+    private static final String FILE_DIR = "C:\\ForgeHardware\\ERP\\DataBases\\";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -49,7 +50,7 @@ public class DataReadServiceImpl implements DataReadService{
         String queryString = queryFactory.selectQueryByName(name);
         LOGGER.info("Query: " + queryString);
 
-        String fileDir = name + FILE_SUFFIX;
+        String fileDir = FILE_DIR + name + FILE_SUFFIX;
         List<Map<String, Object>> result = jdbcTemplate.queryForList(queryString);
         XSSFWorkbook workBook = new XSSFWorkbook();
         XSSFSheet sheet = workBook.createSheet(name);
