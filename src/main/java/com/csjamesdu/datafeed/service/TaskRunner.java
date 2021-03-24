@@ -11,8 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static java.lang.Thread.sleep;
-
 @Service
 public class TaskRunner {
 
@@ -25,7 +23,9 @@ public class TaskRunner {
     @Value("#{'${my.list.of.tables}'.split(',')}")
     private List<String> tables;
 
-    @Scheduled(fixedRate = 10000, initialDelay = 1000)
+
+//    @Scheduled(fixedRate = 10000, initialDelay = 1000)
+    @Scheduled(fixedDelay = 3000)
     public void runTask() {
 
         tables.forEach(name->taskProcess(name));
@@ -33,16 +33,12 @@ public class TaskRunner {
     }
 
     private void taskProcess(String queryName){
-        try {
-            LOGGER.info("*******************************************");
-            LOGGER.info("Start exporting file "+ queryName + " {} ", dateFormat.format(new Date()));
-            dataReadService.export(queryName);
-            LOGGER.info("Finish exporting file " + queryName + " {} ", dateFormat.format(new Date()));
-            LOGGER.info("*******************************************");
-            sleep(1000);
-        } catch (InterruptedException e) {
-            LOGGER.warn("Thread sleep is interrupted: " + e);
-        }
+
+        LOGGER.info("*******************************************");
+        LOGGER.info("Start exporting file "+ queryName + " {} ", dateFormat.format(new Date()));
+        dataReadService.export(queryName);
+        LOGGER.info("Finish exporting file " + queryName + " {} ", dateFormat.format(new Date()));
+        LOGGER.info("*******************************************");
 
     }
 }
