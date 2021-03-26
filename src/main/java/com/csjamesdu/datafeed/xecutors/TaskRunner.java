@@ -18,6 +18,10 @@ public class TaskRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskRunner.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
+    private static final int ATTEMPTS = 10;
+    private static final long TIMEOUT = 15000;
+    private static final long STEP = 3000;
+
     @Autowired
     private DataReadService dataReadService;
 
@@ -25,7 +29,7 @@ public class TaskRunner {
     private List<String> tables;
 
 
-    @Scheduled(fixedDelay = 3000)
+    @Scheduled(fixedDelay = STEP)
     public void runTask() {
 
         dataFeedTask();
@@ -33,14 +37,14 @@ public class TaskRunner {
     }
 
     private void dataFeedTask(){
-        tables.forEach(name->taskProcess(name));
+        tables.forEach(name->taskProcess(name, ATTEMPTS, TIMEOUT));
     }
 
-    private void taskProcess(String queryName){
+    private void taskProcess(String queryName, Integer attempts, Long timeout){
 
         LOGGER.info("*******************************************");
         LOGGER.info("Start exporting file "+ queryName + " {} ", dateFormat.format(new Date()));
-        dataReadService.export(queryName);
+        dataReadService.export(queryName, attempts, timeout);
         LOGGER.info("Finish exporting file " + queryName + " {} ", dateFormat.format(new Date()));
         LOGGER.info("*******************************************");
 

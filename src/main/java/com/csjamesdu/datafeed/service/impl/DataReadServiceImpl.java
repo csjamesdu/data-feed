@@ -65,7 +65,7 @@ public class DataReadServiceImpl implements DataReadService {
     }
 
     @Override
-    public void export(String name) {
+    public void export(String name, Integer attempts, Long timeout) {
 
         String queryString = queryFactory.selectQueryByName(name);
         LOGGER.info("Query: " + queryString);
@@ -78,7 +78,7 @@ public class DataReadServiceImpl implements DataReadService {
         List<Map<String, Object>> result = null;
         try {
 //            result = queryDBWithSimpleRetry(queryString);
-            result = queryDBWithTimeOutRetryPolicy(queryString);
+            result = queryDBWithTimeOutRetryPolicy(queryString, attempts, timeout);
         } catch (Exception e) {
             LOGGER.info("DataBase query failed, please wait for the next execution");
             LOGGER.info("", e);
@@ -132,9 +132,8 @@ public class DataReadServiceImpl implements DataReadService {
         return result;
     }
 
-    private List<Map<String, Object>> queryDBWithTimeOutRetryPolicy(String queryString) throws Exception{
-        final int attempts = 10;
-        final long timeout = 5000;
+    private List<Map<String, Object>> queryDBWithTimeOutRetryPolicy(String queryString, Integer attempts, Long timeout) throws Exception{
+
         final List<Map<String, Object>> resultList = new MyRetryTemplate<List<Map<String, Object>>>(attempts, timeout).execute(() -> {
             // retryable data query
             return jdbcTemplate.queryForList(queryString);
