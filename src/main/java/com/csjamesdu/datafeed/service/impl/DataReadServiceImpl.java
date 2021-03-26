@@ -1,5 +1,8 @@
-package com.csjamesdu.datafeed.service;
+package com.csjamesdu.datafeed.service.impl;
 
+import com.csjamesdu.datafeed.xecutors.MyRetryTemplate;
+import com.csjamesdu.datafeed.service.DataReadService;
+import com.csjamesdu.datafeed.service.QueryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +28,7 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DataReadServiceImpl implements DataReadService{
+public class DataReadServiceImpl implements DataReadService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataReadServiceImpl.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -69,7 +72,7 @@ public class DataReadServiceImpl implements DataReadService{
 
         String fileDir = FILE_DIR + name + FILE_SUFFIX;
 
-        LOGGER.info(">>>>>>DB Query Starts at: " +  dateFormat.format(new Date()));
+        LOGGER.info(">>>>>>DB Query Starts at: " + dateFormat.format(new Date()));
 //        List<Map<String, Object>> result = jdbcTemplate.queryForList(queryString);
 
         List<Map<String, Object>> result = null;
@@ -80,18 +83,13 @@ public class DataReadServiceImpl implements DataReadService{
             LOGGER.info("DataBase query failed, please wait for the next execution");
             LOGGER.info("", e);
         }
-        LOGGER.info(">>>>>>DB Query Ends at: " +  dateFormat.format(new Date()));
+        LOGGER.info(">>>>>>DB Query Ends at: " + dateFormat.format(new Date()));
 
-        if(result != null){
-            LOGGER.info("<<<<<<File Generation Starts at: " +  dateFormat.format(new Date()));
+        if (result != null) {
+            LOGGER.info("<<<<<<File Generation Starts at: " + dateFormat.format(new Date()));
             fileGen(name, result, fileDir);
-            LOGGER.info("<<<<<<File Generation Ends at: " +  dateFormat.format(new Date()));
+            LOGGER.info("<<<<<<File Generation Ends at: " + dateFormat.format(new Date()));
         }
-
-    }
-
-    private void fileGenWithRetry(){
-
 
     }
 
@@ -136,7 +134,7 @@ public class DataReadServiceImpl implements DataReadService{
 
     private List<Map<String, Object>> queryDBWithTimeOutRetryPolicy(String queryString) throws Exception{
         final int attempts = 10;
-        final long timeout = 15000;
+        final long timeout = 5000;
         final List<Map<String, Object>> resultList = new MyRetryTemplate<List<Map<String, Object>>>(attempts, timeout).execute(() -> {
             // retryable data query
             return jdbcTemplate.queryForList(queryString);

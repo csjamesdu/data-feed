@@ -1,5 +1,6 @@
-package com.csjamesdu.datafeed.service;
+package com.csjamesdu.datafeed.service.impl;
 
+import com.csjamesdu.datafeed.service.QueryFactory;
 import org.springframework.stereotype.Service;
 
 @Service

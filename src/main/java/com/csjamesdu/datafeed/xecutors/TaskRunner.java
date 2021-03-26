@@ -1,5 +1,6 @@
-package com.csjamesdu.datafeed.service;
+package com.csjamesdu.datafeed.xecutors;
 
+import com.csjamesdu.datafeed.service.DataReadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +25,15 @@ public class TaskRunner {
     private List<String> tables;
 
 
-//    @Scheduled(fixedRate = 10000, initialDelay = 1000)
     @Scheduled(fixedDelay = 3000)
     public void runTask() {
 
-        tables.forEach(name->taskProcess(name));
+        dataFeedTask();
 
+    }
+
+    private void dataFeedTask(){
+        tables.forEach(name->taskProcess(name));
     }
 
     private void taskProcess(String queryName){

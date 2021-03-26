@@ -1,4 +1,4 @@
-package com.csjamesdu.datafeed.service;
+package com.csjamesdu.datafeed.xecutors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class MyRetryTemplate<T> {
                 if (taskFuture.cancel(true)) {
                     throw new RuntimeException("Force catch treatment on task cancel.");
                 }
-                // If the task could not be cancelled, typically because it has already completed normally.
+                // if task running timeout, a CancellationException would be thrown and caught with recovery logics.
             }, timeout, TimeUnit.MILLISECONDS);
             final T result = taskFuture.get();
             return result;
