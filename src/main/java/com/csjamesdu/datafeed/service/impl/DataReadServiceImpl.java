@@ -1,5 +1,6 @@
 package com.csjamesdu.datafeed.service.impl;
 
+import com.csjamesdu.datafeed.xecutors.FileGenCaller;
 import com.csjamesdu.datafeed.xecutors.MyRetryTemplate;
 import com.csjamesdu.datafeed.service.DataReadService;
 import com.csjamesdu.datafeed.service.QueryFactory;
@@ -87,7 +88,16 @@ public class DataReadServiceImpl implements DataReadService {
 
         if (result != null) {
             LOGGER.info("<<<<<<File Generation Starts at: " + dateFormat.format(new Date()));
-            fileGen(name, result, fileDir);
+//            fileGen(name, result, fileDir);
+            FileGenCaller fcaller = new FileGenCaller(name, fileDir, result);
+            try {
+                final String resultStr = new MyRetryTemplate<String>(attempts, timeout).execute(() -> {
+                    return fcaller.call();
+                });
+            }catch (Exception e){
+                LOGGER.info("<<<<<<File Generation Exception:" + e.getMessage());
+                throw new RuntimeException(e);
+            }
             LOGGER.info("<<<<<<File Generation Ends at: " + dateFormat.format(new Date()));
         }
 
